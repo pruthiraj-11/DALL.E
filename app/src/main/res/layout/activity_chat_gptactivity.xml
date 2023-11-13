@@ -1,9 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ChatGPTActivity">
+    android:id="@+id/root_layout"
+    android:background="@color/white"
+    tools:context=".Activities.ChatGPTActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chat_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/input_container"/>
+    
+    <RelativeLayout
+        android:id="@+id/input_container"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true">
+
+        <EditText
+            android:id="@+id/edit_query"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_corner_edittext"
+            android:ems="10"
+            android:ellipsize="end"
+            android:hint="Send a message"
+            android:lines="1"
+            android:maxLines="1"
+            android:padding="16dp"
+            android:drawablePadding="4dp"
+            android:drawableStart="@drawable/round_keyboard_24"
+            android:drawableEnd="@drawable/round_send_24"
+            android:layout_centerInParent="true"
+            android:inputType="text|textLongMessage" />
+    </RelativeLayout>
+</RelativeLayout>

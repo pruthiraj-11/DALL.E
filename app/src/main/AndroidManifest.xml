@@ -19,7 +19,7 @@
         android:theme="@style/Theme.DALLE"
         tools:targetApi="31">
         <activity
-            android:name=".ServiceActivity"
+            android:name=".Activities.ServiceActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,10 +28,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ChatGPTActivity"
+            android:name=".Activities.ChatGPTActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".Activities.MainActivity"
             android:exported="true"/>
     </application>
 

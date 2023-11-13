@@ -1,4 +1,4 @@
-package com.app.dalle;
+package com.app.dalle.Activities;
 
 import android.Manifest;
 import android.content.Context;
@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.app.dalle.R;
 import com.app.dalle.databinding.ActivityMainBinding;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
