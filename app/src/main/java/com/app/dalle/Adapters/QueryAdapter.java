@@ -33,9 +33,11 @@ public class QueryAdapter extends RecyclerView.Adapter<QueryAdapter.viewHolder> 
         QueryModel queryModel=list.get(position);
         if (queryModel.getSentBy().equals(queryModel.SENT_BY_USER)){
             holder.user_msg_view.setVisibility(View.VISIBLE);
+            holder.chatgpt_msg_view.setVisibility(View.GONE);
             holder.user_msg_text.setText(queryModel.getMessage());
         } else {
             holder.chatgpt_msg_view.setVisibility(View.VISIBLE);
+            holder.user_msg_view.setVisibility(View.GONE);
             holder.chatgpt_msg_text.setText(queryModel.getMessage());
         }
     }
@@ -51,7 +53,7 @@ public class QueryAdapter extends RecyclerView.Adapter<QueryAdapter.viewHolder> 
         public viewHolder(@NonNull View itemView) {
             super(itemView);
             chatgpt_msg_view=itemView.findViewById(R.id.left_chat_view);
-            chatgpt_msg_view=itemView.findViewById(R.id.left_chat_view);
+            chatgpt_msg_text=itemView.findViewById(R.id.left_chat_text_view);
             user_msg_view=itemView.findViewById(R.id.right_chat_view);
             user_msg_text=itemView.findViewById(R.id.right_chat_text_view);
         }

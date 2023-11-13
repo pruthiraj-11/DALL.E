@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/root_layout"
-    android:background="@color/white"
+    android:background="#343541"
     tools:context=".Activities.ChatGPTActivity">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -27,9 +27,8 @@
             android:background="@drawable/rounded_corner_edittext"
             android:ems="10"
             android:ellipsize="end"
+            android:textColor="@color/black"
             android:hint="Send a message"
-            android:lines="1"
-            android:maxLines="1"
             android:padding="16dp"
             android:drawablePadding="4dp"
             android:drawableStart="@drawable/round_keyboard_24"
