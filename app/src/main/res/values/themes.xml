@@ -1,0 +1,9 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Base.Theme.DALLE" parent="Theme.Material3.DayNight.NoActionBar">
+         <item name="colorPrimary">@color/my_light_primary</item>
+        <item name="colorPrimaryDark">@color/my_light_primary</item>
+    </style>
+
+    <style name="Theme.DALLE" parent="Base.Theme.DALLE" />
+
+</resources>
