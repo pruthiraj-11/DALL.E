@@ -1,22 +1,43 @@
 package com.app.dalle;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.os.Environment;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.Toast;
+
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
-import android.os.Build;
-import android.os.Bundle;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.Toast;
+import androidx.core.content.ContextCompat;
 
 import com.app.dalle.databinding.ActivityMainBinding;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -30,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     public static final MediaType JSON = MediaType.get("application/json");
     OkHttpClient client = new OkHttpClient();
+    String imageURL;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +75,42 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        binding.saveimagebtn.setOnClickListener(view -> {
+            if ((ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED)
+                    && (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED)) {
+                requestPermissions();
+            } else {
+                Picasso.get().load(imageURL).into(new Target() {
+                                                      @Override
+                                                      public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                                          try {
+                                                              String root = Environment.getExternalStorageDirectory().toString();
+                                                              File myDir = new File(root + "/DALL.E 2");
+                                                              if (!myDir.exists()) {
+                                                                  myDir.mkdirs();
+                                                              }
+                                                              String name = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS", Locale.getDefault()).format(System.currentTimeMillis())+".jpg";
+                                                              myDir = new File(myDir, name);
+                                                              FileOutputStream fileOutputStream = new FileOutputStream(myDir);
+                                                              bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fileOutputStream);
+                                                              fileOutputStream.flush();
+                                                              fileOutputStream.close();
+                                                          } catch(Exception e){
+                                                              Toast.makeText(MainActivity.this,e.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
+                                                          }
+                                                      }
+                                                      @Override
+                                                      public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                                                          Toast.makeText(MainActivity.this,e.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
+                                                      }
+                                                      @Override
+                                                      public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                                                      }
+                                                  }
+                        );
+            }
+        });
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -83,10 +141,10 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
                 try {
-                    JSONObject jsonObject=new JSONObject(response.body().toString());
-                    String imageURL=jsonObject.getJSONArray("data").getJSONObject(0).getString("url");
+                    JSONObject jsonObject=new JSONObject(Objects.requireNonNull(response.body()).toString());
+                    imageURL=jsonObject.getJSONArray("data").getJSONObject(0).getString("url");
                     loadImage(imageURL);
                     binding.progressBar.setVisibility(View.GONE);
                 } catch (Exception e){
@@ -96,13 +154,52 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void loadImage(String imageURL) {
+    private void loadImage(String url) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Picasso.get().load(imageURL).placeholder(R.drawable.ic_cloud).into(binding.outputView);
+                Picasso.get().load(url).placeholder(R.drawable.ic_cloud).into(binding.outputView);
+                binding.saveimagebtn.setEnabled(true);
             }
         });
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if ( v instanceof EditText) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)ev.getRawX(), (int)ev.getRawY())) {
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    private void requestPermissions() {
+        Dexter.withContext(getApplicationContext())
+                .withPermissions(android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
+                        if (multiplePermissionsReport.areAllPermissionsGranted()) {
+                            Toast.makeText(MainActivity.this, "All the permissions are granted", Toast.LENGTH_SHORT).show();
+                        }
+                        else if (multiplePermissionsReport.isAnyPermissionPermanentlyDenied()) {
+//                            showSettingsDialog();
+                        }
+                    }
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
+                        permissionToken.continuePermissionRequest();
+                    }
+                }).withErrorListener(error -> Toast.makeText(getApplicationContext(), "Error occurred! ", Toast.LENGTH_SHORT).show())
+                .onSameThread().check();
+    }
 }
