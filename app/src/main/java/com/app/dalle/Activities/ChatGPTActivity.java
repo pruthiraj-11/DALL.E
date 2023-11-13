@@ -38,7 +38,7 @@ import okhttp3.Response;
 public class ChatGPTActivity extends AppCompatActivity {
     ActivityChatGptactivityBinding binding;
     ArrayList<QueryModel> list;
-    public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+    public static final MediaType JSON = MediaType.get("application/json");
     OkHttpClient client = new OkHttpClient();
     QueryAdapter queryAdapter;
 
@@ -112,7 +112,7 @@ public class ChatGPTActivity extends AppCompatActivity {
         list.add(new QueryModel("Generating...","chatgpt"));
         JSONObject jsonBody=new JSONObject();
         try {
-            jsonBody.put("model","text-davinci-003");
+            jsonBody.put("model","gpt-3.5-turbo-instruct");
             jsonBody.put("prompt",message);
             jsonBody.put("max_tokens",4000);
             jsonBody.put("temperature",0);
