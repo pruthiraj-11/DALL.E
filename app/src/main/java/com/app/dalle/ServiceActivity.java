@@ -1,5 +1,6 @@
 package com.app.dalle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -29,6 +30,13 @@ public class ServiceActivity extends AppCompatActivity {
         binding.button2.setOnClickListener(view -> {
             startActivity(new Intent(ServiceActivity.this, ChatGPTActivity.class));
             finish();
+        });
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                finish();
+            }
         });
     }
 }

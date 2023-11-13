@@ -1,8 +1,10 @@
 package com.app.dalle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -50,6 +52,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                startActivity(new Intent(MainActivity.this, ServiceActivity.class));
+                finish();
+            }
+        });
     }
 
     private void generateImage(String input)  {
@@ -94,4 +104,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 }
