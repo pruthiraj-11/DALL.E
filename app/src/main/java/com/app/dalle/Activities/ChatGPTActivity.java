@@ -38,7 +38,7 @@ import okhttp3.Response;
 public class ChatGPTActivity extends AppCompatActivity {
     ActivityChatGptactivityBinding binding;
     ArrayList<QueryModel> list;
-    public static final MediaType JSON = MediaType.get("application/json");
+    public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     OkHttpClient client = new OkHttpClient();
     QueryAdapter queryAdapter;
 
@@ -122,7 +122,7 @@ public class ChatGPTActivity extends AppCompatActivity {
         RequestBody requestBody=RequestBody.create(jsonBody.toString(),JSON);
         Request request=new Request.Builder()
                 .url("https://api.openai.com/v1/completions")
-                .header("Authorization","Bearer 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")
+                .header("Authorization","Bearer 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")
                 .post(requestBody)
                 .build();
         client.newCall(request).enqueue(new Callback() {
